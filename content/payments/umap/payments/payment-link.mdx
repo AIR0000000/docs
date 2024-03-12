@@ -1,0 +1,104 @@
+---
+sidebar_title: UPI Intent / QR
+page_title: UMAP - Payments - UPI Intent / QR
+order: 4
+visible_in_sidebar: true
+---
+
+
+<Card padding="nano" shape="rounded" marginBottom="micro">
+  <details>
+    <summary>
+        <Text size="medium" marginBottom="none" paddingRight="medium"> 
+            Check these out if you haven't before you read this page,
+        </Text>
+    </summary>
+            <p><strong>Before creating a UPI intent / qr, check these out,</strong></p>
+            <ul>
+                <li>
+                <a href="" target="_blank">
+                    <code>Merchant onboarding</code> ↗ 
+                    </a>
+                </li>
+            </ul>
+  </details>
+</Card>
+
+## What is a UPI Intent / QR?
+
+UPI intent links and QR codes offer a convenient way for users to make payments securely and 
+quickly using their mobile devices. They eliminate the need to manually enter payment details, 
+making transactions faster and more convenient.
+
+
+## How it works?
+
+
+
+<img
+  src="https://storage.googleapis.com/strapi-assets/latest/intent/intent.png"
+  alt="intent qr flow"
+/>
+
+UPI intents / qrs can be generated using the Payment Link API, there are two use cases we support with UPI intents/ qrs.
+
+<Tabs
+  tabs={[
+    {
+      key: "pay_single",
+      label: "pay_single",
+      content: (
+        <>
+            <p><code>pay_single</code> intent links can only be paid to once, if more payments are made on the same links or QRs, they will get rejected</p>            
+            <CodeBlockWithCopy language="json">
+{`{
+    "amount": 10000,
+    "currency": "INR",
+    "expiryDate": "2023-09-04 12:08:20.202644 +0530 IST",
+    "merchantReferenceId": "1240689979139556557",
+    "merchantVpa": "midoriya@setu",
+    "metadata": {
+        "InvoiceNumber": "INV-21-12-009"
+    },
+    "paymentType": "pay_single",
+    "transactionNote": "testpay"
+}`}
+            </CodeBlockWithCopy>
+            <Callout type="highlight">`amount` field is required for a pay_single Intent link / QR</Callout>
+        </>
+      ),
+    },
+    {
+      key: "pay_multi",
+      label: "pay_multi",
+      content: (
+        <>
+            <CodeBlockWithCopy language="json">
+{`{
+    "currency": "INR",
+    "expiryDate": "2023-09-04 12:08:20.202644 +0530 IST",
+    "merchantReferenceId": "1240689979139556557",
+    "merchantVpa": "midoriya@setu",
+    "metadata": {
+        "InvoiceNumber": "INV-21-12-009"
+    },
+    "minAmount": 10000,
+    "paymentType": "pay_multi",
+    "transactionNote": "testpay"
+}`}
+            </CodeBlockWithCopy>
+        </>
+      ),
+    },    
+  ]}
+/>
+
+<br/>
+
+<NextPage
+    info={{
+        description: "Lifecycle of a payment",
+        slug: "/",
+        title: "Payments",
+    }}
+/>
