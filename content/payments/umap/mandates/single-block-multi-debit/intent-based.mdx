@@ -7,7 +7,11 @@ visible_in_sidebar: true
 
 ## Intent Based Single Block Multi Debit Mandate
 
-### Create
+Steps to collect a payment via an intent based single block multi debit mandate
+
+<hr class="primary" />
+
+#### Step 1 - create an intent based single block multi debit mandate
 
 The process for mandate creation is described in the below diagram:
 
@@ -16,14 +20,16 @@ The process for mandate creation is described in the below diagram:
   alt="Bridge"
 />
 
-The merchant will have to call the **<i>create Mandates API</i>** with the correct set of parameters. Post this, they will receive webhooks for two events **<i>mandate initiated, mandate registration confirmed.</i>** 
-
-Please refer to the Document Reference section for checking the API reference and the notifications.
-
-#### Create Single Block Multi Debit Mandate via Intent API
+The merchant will have to call the **<i>create mandate API</i>** with the correct set of parameters.
 
 <table>
     <tbody>
+        <tr>
+            <th>Staging Host</th>
+            <td>
+                <code>https://umap-dev-core.setu.co/api/v1</code>
+            </td>
+        </tr>
         <tr>
             <th>Method</th>
             <td>
@@ -57,7 +63,7 @@ Please refer to the Document Reference section for checking the API reference an
     </tbody>
 </table>
 
-##### Sample request
+###### Sample request
 
 <CodeBlockWithCopy language="json">
     {`{
@@ -73,14 +79,14 @@ Please refer to the Document Reference section for checking the API reference an
     "customerVpa": "ram@axis",
     "endDate": "02012008",
     "expireAfter": 120,
-    "firstExecutionAmount": 1000,
+    "firstExecutionAmount": 0,
     "frequency": "as presented",
     "initiationMode": "01",
     "maxAmountLimit": 1000,
     "merchantReferenceId": "ABC1234789",
     "merchantVpa": "acme.corp@axis",
     "productConfigId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
-    "purpose": "14",
+    "purpose": "76",
     "recurrenceRule": "on",
     "recurrenceValue": 0,
     "shareToPayee": false,
@@ -89,7 +95,22 @@ Please refer to the Document Reference section for checking the API reference an
 }`}
 </CodeBlockWithCopy>
 
-##### Sample response
+<Callout type="warning">
+    <ul>
+        <li>The value of <code>frequency</code> must be <code>as presented</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>creationMode</code> must be <code>qr</code> or <code>intent</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>initiationMode</code> must be <code>01</code> if <code>creationMode</code> is <code>qr</code></li>
+        <li>The value of <code>initiationMode</code> must be <code>04</code> if{" "} <code>creationMode</code> is{" "}<code>intent</code></li>
+        <li>The value of <code>recurrenceRule</code> must be <code>on</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>recurrenceValue</code> must be <code>0</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>autoExecute</code> and <code>autoPreNotify</code> must be <code>false</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>blockFunds</code> and <code>allowMultipleDebit</code> must be <code>true</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>purpose</code> must be <code>76</code> for creating a single block multi debit mandate.</li>
+        <li>The value of <code>customerRevocable</code> must be <code>false</code> for creating a single block multi debit mandate.</li>
+    </ul>
+</Callout>
+
+###### Sample response
 
 <CodeBlockWithCopy language="json">
     {`{
@@ -102,21 +123,21 @@ Please refer to the Document Reference section for checking the API reference an
   "createdAt": "2023-09-04 12:08:20.202644 +0530 IST",
   "creationMode": "qr",
   "currency": "INR",
-  "customerRevocable": true,
+  "customerRevocable": false,
   "customerVpa": "ram@axis",
   "endDate": "02012008",
   "expireAfter": 120,
-  "firstExecutionAmount": 1000,
-  "frequency": "as presented",
+  "firstExecutionAmount": 0,
+  "frequency": "single block multi debit",
   "id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "initiationMode": "01",
-  "intentLink": "upi://mandate?pa=deku040920232@okokaxis&pn=merchant-1&validitystart=31121995&validityend=31121996&am=100.00&amrule=MAX&recur=one%20time&recurvalue=0&recurtype=on&tr=SETgv8wOOCElAtpzfbAEXqcKvN8QPfunAhI&cu=INR&mc=1234&mode=04&purpose=14&rev=N&share=Y&qrexpire=04092023&block=N&orgid=000000&version=2.0&txnType=create&tid=SETgv8wOOCElAtpzfbAEXqcKvN8QPfunAhI",
+  "intentLink": "upi://mandate?pa=acme.corp@axis&pn=merchant-1&validitystart=02012006&validityend=02012008&am=100.00&amrule=MAX&recur=ASPRESENTED&tr=BTTZrc5gDFkuCr3n3I0ey4aNtzLOLR7K7aR&cu=INR&mc=1234&mode=01&purpose=76&rev=N&share=N&qrexpire=02012006&block=Y&orgid=409214&version=2.0&txnType=CREATE&tid=BTTZrc5gDFkuCr3n3I0ey4aNtzLOLR7K7aR",
   "maxAmountLimit": 1000,
   "merchantId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "merchantReferenceId": "ABC1234789",
   "merchantVpa": "acme.corp@axis",
   "productConfigId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
-  "purpose": "14",
+  "purpose": "76",
   "recurrenceRule": "on",
   "recurrenceValue": 0,
   "shareToPayee": false,
@@ -127,38 +148,50 @@ Please refer to the Document Reference section for checking the API reference an
 }`}
 </CodeBlockWithCopy>
 
-<a href="/payments/umap/api-reference#/category~mandates/operation~mandates#create"target="_blank">
-<code>Create Mandate API</code> ↗
-</a>
+**In the above response:**
 
-### Update
+-   `intentLink` or corresponding qr can be shared directly with customers via a communication channel.
+-   `id` is a unique mandate ID that is associated with this mandate and can be used to track it later.
 
-There are only two updates possible on a Single Block Multi Debit UPI mandate
-- Changing the mandate amount
+This request to generate a mandate creation intent link / qr is flexible and allows for many use cases. To know more about all the API params, please refer to the API documentation <a href="/payments/umap/api-reference#/category~mandates/operation~mandates#create" target="_blank">here</a>.
 
-The process for updating a mandate is described in the below diagram:
+Post this, once the customer clicks on the intent link / scans the qr code and enters the mPIN, the merchant will receive webhooks for two events **<i>mandate initiated, mandate registration confirmed.</i>** 
+
+Please refer to the Document Reference section for checking the API reference and the notifications.
+
+<hr class="tertiary" />
+
+#### Step 2 - execute mandate
+
+Once the mandate is **LIVE**, the merchant can execute the mandate whenever a payment is to be collected from the customer.
+
+The process for mandate execution is described in the below diagram:
 
 <img
-  src="https://storage.googleapis.com/strapi-assets/latest/mandate-update-intent/mandate-update-intent.png"
+  src="https://storage.googleapis.com/strapi-assets/latest/mandate-pre-debit-notification/mandate-pre-debit-notification.png"
   alt="Bridge"
 />
 
-The merchant will have to call the **<i>modify Mandates API</i>** with the correct set of parameters. Post this, they will receive webhooks for three events: **<i>update operation initiated, update operation confirmation and mandate status notification.</i>**
-
-#### Update Single Block Multi Debit Mandate via Intent API
+The merchant will have to call the **<i>execute mandate API</i>** with the correct set of parameters.
 
 <table>
     <tbody>
         <tr>
+            <th>Staging Host</th>
+            <td>
+                <code>https://umap-dev-core.setu.co/api/v1</code>
+            </td>
+        </tr>
+        <tr>
             <th>Method</th>
             <td>
-                <code>PUT</code>
+                <code>POST</code>
             </td>
         </tr>
         <tr>
             <th>Path</th>
             <td>
-                <code>/merchants/mandates/&#123;mandateId&#125;/modify</code>
+                <code>/merchants/mandates&#123;mandateId&#125;execute</code>
             </td>
         </tr>
         <tr>
@@ -182,35 +215,69 @@ The merchant will have to call the **<i>modify Mandates API</i>** with the corre
     </tbody>
 </table>
 
-##### Sample request
+###### Sample request
 
 <CodeBlockWithCopy language="json">
     {`{
-    "amountLimit": 1000,
-    "expireAfter": 120,
-    "merchantReferenceId": "ABC1234789"
+    "amount": 1000,
+    "merchantReferenceId": "ABC1234789",
+    "remark": "Transaction for car loan emi",
+    "sequenceNumber": 1,
+    "umn": "setumandate1234789@ybl"
 }`}
 </CodeBlockWithCopy>
 
-##### Sample response
+<Callout type="warning">
+    <ul>
+        <li>Note that the value of <code>amount</code> must be such that the cumulative amount debited for the given mandate post current debit is within the amount that is blocked in customer's account</li>
+        <li>The value of <code>umn</code> can be derived from the notifications received by the merchant during mandate creation flow or via check mandate status API</li>
+    </ul>
+</Callout>
+
+###### Sample response
 
 <CodeBlockWithCopy language="json">
     {`{
-  "amountLimit": 1000,
-  "endDate": "02012006",
-  "expireAfter": 120,
+  "amount": 1000,
+  "createdAt": "2023-09-04 12:08:20.202644 +0530 IST",
   "id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
-  "intentLink": "upi://mandate?pa=deku040920232@okokaxis&validitystart=31121995&validityend=30122025&am=901.00&amrule=max&recur=one%20time&recurvalue=0&recurtype=on&cu=INR&mc=1234&mode=01&purpose=14&rev=N&block=N&txnType=update&umn=SETUS7mxYHK1A6yXhxJsoKM7yxKqC2r0&tid=SETM3Iij4WQrtEUbOUFkTpQp2EpR5wqy5Ou",
   "mandateId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "merchantId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "merchantReferenceId": "ABC1234789",
-  "mode": "qr",
+  "remark": "Transaction for car loan emi",
+  "sequenceNumber": 1,
   "status": "pending",
   "txnId": "BTTZrc5gDFkuCr3n3I0ey4aNtzLOLR7K7aR",
   "umn": "c27f5fc30d344e9594fce0afa34f8859@mypsp"
 }`}
 </CodeBlockWithCopy>
 
-<a href="/payments/umap/api-reference#/category~mandates/operation~mandates#modify"target="_blank">
-<code>Update Mandate API</code> ↗
-</a>
+**In the above response:**
+
+-   `id` is a unique ID that is associated with this mandate execution and can be used to track it later.
+
+To know more about all the API params, please refer to the API documentation <a href="/payments/umap/api-reference#/category~mandates/operation~mandates#execute" target="_blank">here</a>.
+
+UMAP will send notifications to the merchant once **<i>the execution operation is completed</i>** and **<i>the final status of the mandate.</i>**
+
+Please refer to the Document Reference section for checking the API reference and the notifications.
+
+<hr class="primary" />
+
+Other operations that can be performed on a single block multi debit mandate once it is <b>LIVE</b>
+<ul>
+    <li>Updating a single block multi debit mandate</li>
+    <li>Revoking a single block multi debit mandate</li>
+    <li>Pausing a single block multi debit mandate</li>
+    <li>Unpausing a paused single block multi debit mandate</li>
+</ul>
+
+<hr class="tertiary" />
+
+<NextPage
+    info={{
+        description: "Other operations that can be performed on a mandate.  ",
+        slug: "/payments/umap/mandates/generic",
+        title: "Generic Operations",
+    }}
+/>

@@ -1,0 +1,21 @@
+---
+sidebar_title: Pause
+page_title: UMAP - Mandates - Pause
+order: 3
+visible_in_sidebar: true
+---
+
+## Pausing a mandate
+
+Only the end customer has the option of pausing a UPI mandate from their UPI app and there is no merchant intervention required.
+
+When a customer initiates mandate pause from their UPI app, UMAP will send notifications to the merchant for 3 events **<i>pause operation initiated, pause operation confirmation</i>** and **<i>mandate status</i>**. This is depicted in the below diagram
+
+<img
+  src="https://storage.googleapis.com/strapi-assets/latest/mandate-pause/mandate-pause.png"
+  alt="Bridge"
+/>
+
+<Callout type="warning">
+    The only operation that can be performed on a <code>paused</code> mandate is to <code>unpause</code> it. Other operations like <code>pre debit notification</code>, <code>execution</code>, <code>update</code> and <code>revoke</code> are blocked while a mandate is <code>paused</code>
+</Callout>

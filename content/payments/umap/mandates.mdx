@@ -7,17 +7,19 @@ visible_in_sidebar: true
 
 ## Mandates
 
-### Context
+#### What is a Mandate ?
 
 Unified Payments Interface (UPI) mandates represent a transformative feature within India's digital payment ecosystem, enabling a seamless and automated way to facilitate recurring transactions.
 
-As an integral component of the UPI framework, UPI mandates offer businesses and consumers the convenience of setting up pre-authorized debits for various types of payments such as utility bills, subscription fees, EMIs, and more. This feature not only simplifies the payment process but also enhances the reliability and efficiency of managing recurring financial commitments.
+As an integral component of the UPI framework, UPI mandates offer businesses and consumers the convenience of setting up pre-authorized one time / recurring debits for various types of payments such as utility bills, subscription fees, EMIs, and more. This feature not only simplifies the payment process but also enhances the reliability and efficiency of managing recurring financial commitments.
+
+Mandate creation / registration is a one time activity and it allows the customer's account to be debited as per the agreed terms and conditions and recurrence schedule.
 
 For developers and product managers integrating UPI mandates into their applications, the API specification document serves as a crucial guide. It provides detailed information on how to implement UPI mandates, ensuring secure and standardized transaction flows that comply with the guidelines set by the National Payments Corporation of India (NPCI). By leveraging UPI mandates, businesses can offer their customers a user-friendly payment experience that minimizes manual intervention and reduces the risk of missed payments.
 
 As we introduce this API specification, we aim to empower our potential customers with the tools and knowledge needed to seamlessly integrate UPI mandates into their financial services. This document outlines the technical requirements, operational workflows, and security protocols essential for harnessing the full potential of UPI mandates, thereby enabling efficient and automated recurring payments that cater to the evolving needs of the digital economy.
 
-### Key Features
+#### Key Features
 
 Some key features of our UPI Mandate Solutions are as follows -
 
@@ -30,45 +32,98 @@ Some key features of our UPI Mandate Solutions are as follows -
 
 <br />
 
-###### Below are the available mandate products from UMAP
+#### What can I do with a Mandate ?
+
+Here is a list of sample use cases for the mandate products offered by UMAP
+- **Recurring mandates** can be used to collect recurring payments for use cases like **Subscriptions**, **Loan Repayments**, **Post Paid Bills**, **Mutual Fund SIPs**, **Wallet Recharges** etc.
+For example, Stage offers streaming services. They offer a one week free trial for their users after which the user can signup for monthly plans.
+Stage doesn't want to be responsible for notifying the user and collecting payment for every subsequent subscription renewal
+To support this use case Stage can integrate with UMAP mandates to
+offer creation of a monthly UPI mandate on their website/app. 
+When a customer signs up for a monthly subscription plan, Stage registers a monthly mandate via UMAP
+and UMAP takes care of notifying the customer and executing / debiting the customer on a monthly basis.
+- **One time mandates** can be used to support use cases like **IPO Applications**, **Hotel reservations**, etc.
+For example, Zerodha wants to enable users to apply for an IPO on their platform. Based on allocation of shares decided by the sponsor bank, debit should/shouldn't happen for a user.
+To support this use case Zerodha can integrate with UMAP mandates to
+offer creation of a one time UPI mandate on their platform. 
+When a customer signs up for a monthly subscription plan, Stage registers a monthly mandate via UMAP
+and UMAP takes care of notifying the customer and executing / debiting the customer on a monthly basis.
+- `TODO: mention a single block multi debit mandate use case`
+
+
+#### How does a Mandate work ?
+
+The first step to collect a payment via a mandate is for the **Merchant** to create a mandate. There are 2 ways in which a mandate can be created: **Intent based**, **Collect based**
+
+<Tabs
+  tabs={[
+    {
+      key: "tab1",
+      label: "Intent based",
+      content: (
+        <Text>
+            Intent based mandates are UPI mandates which are powered via the NPCI intent flow for mandate creation. A simple end user journey for this mandate created via in-app intent is depicted below -
+            <img
+                src="https://storage.googleapis.com/strapi-assets/latest/intent-based-mandate-flow/intent-based-mandate-flow.png"
+                alt="Bridge"
+            />
+            Here is a typical list of steps involved in collecting a payment from a customer via an intent based mandate. Let’s use the example of `TODO: mention mandate use case`. In this scenario, the lender (`TODO: replace 'lender' based on use case mentioned`) is the Merchant partner that has integrated with Setu.
+            <ol>
+                <li><b>Merchant</b> sends mandate details to <b>UMAP</b> and receives a unique mandate creation intent link / qr to send to their <b>Customer</b>: `TODO: Redirect to intent based mandate creation`</li>
+                <li><b>Customer</b> clicks mandate creation intent link, chooses preferred UPI app / scans the qr on preferred UPI app and enters mPIN to initiate mandate creation.</li>
+                <li><b>UMAP</b> triggers a webhook notification on mandate creation initiation which the merchant can use to update mandate status at their end.</li>
+                <li>Once the mandate is <b>LIVE</b>, <b>UMAP</b> triggers another webhook notification which the merchant can use to mark mandate status as <b>LIVE</b> at their end.</li>
+                <li><b>Merchant</b> triggers a pre debit notification via <b>UMAP</b> 48 - 72 Hrs before debit / execution to let the <b>Customer</b> get notified about the upcoming debit.</li>
+                <li>48 - 72 Hrs after the pre debit notification is successful, <b>Merchant</b> triggers mandate execution via <b>UMAP</b>.</li>
+                <li><b>Customer</b> receives a collect request notification on their UPI app, clicks on the notification and enters mPIN to authorise the payment.</li>
+            </ol>
+        </Text>
+        ),
+    },
+    {
+      key: "tab2",
+      label: "Collect based",
+      content: (
+        <Text>
+            These are UPI mandates which are powered via the NPCI collect flow for mandate creation. A simple end user journey for this mandate created via a collect request is depicted below -
+            <img
+                src="https://storage.googleapis.com/strapi-assets/latest/collect-based-mandate-flow/collect-based-mandate-flow.png"
+                alt="Bridge"
+            />
+            Here is a typical list of steps involved in collecting a payment from a customer via an intent based mandate. Let’s use the example of `TODO: mention mandate use case`. In this scenario, the lender (`TODO: replace 'lender' based on use case mentioned`) is the Merchant partner that has integrated with Setu.
+            <ol>
+                <li><b>Merchant</b> sends mandate details to <b>UMAP</b> and the <b>Customer</b> receives a mandate creation notification on their UPI app: `TODO: Redirect to intent based mandate creation`</li>
+                <li><b>Customer</b> clicks mandate creation notification, and enters mPIN to initiate mandate creation.</li>
+                <li>Once the mandate is <b>LIVE</b>, <b>UMAP</b> triggers a webhook notification which the merchant can use to mark mandate status as <b>LIVE</b> at their end.</li>
+                <li><b>Merchant</b> triggers a pre debit notification via <b>UMAP</b> 48 - 72 Hrs before debit / execution to let the <b>Customer</b> get notified about the upcoming debit.</li>
+                <li>48 - 72 Hrs after the pre debit notification is successful, <b>Merchant</b> triggers mandate execution via <b>UMAP</b>.</li>
+                <li><b>Customer</b> receives a collect request notification on their UPI app, clicks on the notification and enters mPIN to authorise the payment.</li>
+            </ol>
+        </Text>
+        ),
+    },
+  ]}
+/>
+
+Other operations that can be performed on a mandate once it is **LIVE**:
+- Updating a mandate
+- Revoking a mandate
+- Pausing a mandate
+- Unpausing a paused mandate
+
+#### Below are the mandate products provided by UMAP
+
+- **One time mandates**: A one time mandate is a mandate that can only be executed / debited once.
+- **Recurring mandates**: A recurring mandate is a mandate that that can be executed / debited multiple times as per the recurrence pattern configured / agreed upon during mandate creation.
+- **Single block multi debit mandates**: A single block mutli debit mandate is a mandate that blocks a requested amount of funds in the customer's account and can be executed / debited multiple times against blocked funds.
 
 <UMAPMandates />
 
-### UPI Mandate Statuses
+#### Mandate lifecycle
 
 A UPI mandate will flow through the below statuses throughout its lifecycle -
 
 <img
     src="https://storage.googleapis.com/strapi-assets/latest/upi-mandate-statuses/upi-mandate-statuses.png"
-    alt="Bridge"
-/>
-
-Certain UPI Mandate flows are specific to the way a UPI mandate is created - intent/QR based or collect based. These type specific flows are -
-
--   Creating a UPI mandate
--   Updating a UPI mandate and
-
-Some operations on UPI mandates are generic and not dependent on the mode of mandate creation. These are
-
--   Sending pre-debit notification on a UPI mandate
--   Debiting a UPI mandate
--   Revoking a UPI mandate
--   Pause/Unpause flows
-
-### Collect Based UPI Mandates
-
-These are UPI mandates which are powered via the NPCI collect flow for mandate creation. A simple end user journey for this mandate created via a collect request is depicted below -
-
-<img
-    src="https://storage.googleapis.com/strapi-assets/latest/collect-based-mandate-flow/collect-based-mandate-flow.png"
-    alt="Bridge"
-/>
-
-### Intent Based UPI Mandates
-
-These are UPI mandates which are powered via the NPCI intent flow for mandate creation. A simple end user journey for this mandate created via in-app intent is depicted below -
-
-<img
-    src="https://storage.googleapis.com/strapi-assets/latest/intent-based-mandate-flow/intent-based-mandate-flow.png"
     alt="Bridge"
 />

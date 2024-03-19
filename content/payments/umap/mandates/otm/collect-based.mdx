@@ -1,27 +1,35 @@
 ---
 sidebar_title: Collect Based
 page_title: UMAP - Mandates - Collect Based One Time Mandate
-order: 2
+order: 1
 visible_in_sidebar: true
 ---
 
 ## Collect Based One Time Mandate
 
-### Create
+Steps to collect a payment via an collect Based one time mandate
 
-The process for mandate creation is described in the below diagram: 
+<hr class="primary" />
+
+#### Step 1 - create a collect based one time mandate
+
+The process for mandate creation is described in the below diagram:
 
 <img
-  src="https://storage.googleapis.com/strapi-assets/latest/mandate-create-collect/mandate-create-collect.png"
+  src="https://storage.googleapis.com/strapi-assets/latest/intent-based-mandate-create/intent-based-mandate-create.png"
   alt="Bridge"
 />
 
-The merchant will have to call the **<i>create Mandates API</i>** with the correct set of parameters. Post this, they will receive webhooks for two events **<i>mandate registration confirmation</i>** and **<i>mandate status notification.</i>**
-
-#### Create One Time Mandate via Collect API
+The merchant will have to call the **<i>create mandate API</i>** with the correct set of parameters.
 
 <table>
     <tbody>
+        <tr>
+            <th>Staging Host</th>
+            <td>
+                <code>https://umap-dev-core.setu.co/api/v1</code>
+            </td>
+        </tr>
         <tr>
             <th>Method</th>
             <td>
@@ -55,7 +63,7 @@ The merchant will have to call the **<i>create Mandates API</i>** with the corre
     </tbody>
 </table>
 
-##### Sample request
+###### Sample request
 
 <CodeBlockWithCopy language="json">
     {`{
@@ -71,7 +79,7 @@ The merchant will have to call the **<i>create Mandates API</i>** with the corre
     "customerVpa": "ram@axis",
     "endDate": "02012008",
     "expireAfter": 120,
-    "firstExecutionAmount": 1000,
+    "firstExecutionAmount": 0,
     "frequency": "one time",
     "initiationMode": "00",
     "maxAmountLimit": 1000,
@@ -87,7 +95,18 @@ The merchant will have to call the **<i>create Mandates API</i>** with the corre
 }`}
 </CodeBlockWithCopy>
 
-##### Sample response
+<Callout type="warning">
+    <ul>
+        <li>Note that the value of <code>frequency</code> must be <code>one time</code> for creating a one time mandate.</li>
+        <li>The value of <code>creationMode</code> must be <code>collect</code> for creating an collect based mandate.</li>
+        <li>The value of <code>initiationMode</code> must be <code>00</code> if <code>creationMode</code> is <code>collect</code></li>
+        <li>The value of <code>recurrenceRule</code> must be{" "} <code>on</code> for creating a one time mandate.</li>
+        <li>The value of <code>recurrenceValue</code> must be{" "} <code>0</code> for creating a one time mandate.</li>
+        <li>The value of <code>autoExecute</code> and <code>autoPreNotify</code> must be{" "}<code>false</code> for creating a one time mandate.</li>
+    </ul>
+</Callout>
+
+###### Sample response
 
 <CodeBlockWithCopy language="json">
     {`{
@@ -104,7 +123,7 @@ The merchant will have to call the **<i>create Mandates API</i>** with the corre
   "customerVpa": "ram@axis",
   "endDate": "02012008",
   "expireAfter": 120,
-  "firstExecutionAmount": 1000,
+  "firstExecutionAmount": 0,
   "frequency": "one time",
   "id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "initiationMode": "00",
@@ -118,39 +137,55 @@ The merchant will have to call the **<i>create Mandates API</i>** with the corre
   "recurrenceValue": 0,
   "shareToPayee": false,
   "startDate": "02012006",
-  "status": "initiated",
+  "status": "pending",
   "transactionNote": "Transaction note",
   "txnId": "BTTZrc5gDFkuCr3n3I0ey4aNtzLOLR7K7aR"
 }`}
 </CodeBlockWithCopy>
 
-<a href="/payments/umap/api-reference#/category~mandates/operation~mandates#create"target="_blank">
-<code>Create Mandate API</code> ↗
-</a>
+**In the above response:**
 
-### Update
+-   `id` is a unique mandate ID that is associated with this mandate and can be used to track it later.
+
+This request to trigger mandate creation via collect flow is flexible and allows for many use cases. To know more about all the API params, please refer to the API documentation <a href="/payments/umap/api-reference#/category~mandates/operation~mandates#create" target="_blank">here</a>.
+
+Post this, once the customer clicks on the mandate creation notification and enters the mPIN, the merchant will receive a webhook for **<i>mandate registration confirmation</i>** 
+
+Please refer to the Document Reference section for checking the API reference and the notifications.
+
+<hr class="tertiary" />
+
+#### Step 2 - send a pre debit notification
+
+Once the mandate is **LIVE** the merchant needs to send a pre debit notification 48 - 72 Hrs before debit / execution to let the customer be notified of the upcoming debit.
+
+The process for mandate pre debit notification is described in the below diagram:
 
 <img
-  src="https://storage.googleapis.com/strapi-assets/latest/mandate-update-collect/mandate-update-collect.png"
+  src="https://storage.googleapis.com/strapi-assets/latest/mandate-pre-debit-notification/mandate-pre-debit-notification.png"
   alt="Bridge"
 />
 
-The merchant will have to call the **<i>modify Mandates API</i>** with the correct set of parameters. Post this, they will receive webhooks for two events: **<i>update operation confirmation</i>** and **<i>mandate status notification.</i>**
-
-#### Update One Time Mandate via Collect API
+The merchant will have to call the **<i>send mandate pre debit notification API</i>** with the correct set of parameters.
 
 <table>
     <tbody>
         <tr>
+            <th>Staging Host</th>
+            <td>
+                <code>https://umap-dev-core.setu.co/api/v1</code>
+            </td>
+        </tr>
+        <tr>
             <th>Method</th>
             <td>
-                <code>PUT</code>
+                <code>POST</code>
             </td>
         </tr>
         <tr>
             <th>Path</th>
             <td>
-                <code>/merchants/mandates/&#123;mandateId&#125;/modify</code>
+                <code>/merchants/mandates&#123;mandateId&#125;notify</code>
             </td>
         </tr>
         <tr>
@@ -174,35 +209,173 @@ The merchant will have to call the **<i>modify Mandates API</i>** with the corre
     </tbody>
 </table>
 
-##### Sample request
+###### Sample request
 
 <CodeBlockWithCopy language="json">
     {`{
-    "amountLimit": 1000,
-    "endDate": "02012006",
-    "expireAfter": 120,
-    "merchantReferenceId": "ABC1234789"
+    "amount": 1000,
+    "executionDate": "04012006",
+    "merchantReferenceId": "ABC1234789",
+    "sequenceNumber": 1,
+    "umn": "setumandate1234789@ybl"
 }`}
 </CodeBlockWithCopy>
 
-##### Sample response
+<Callout type="warning">
+    <ul>
+        <li>Note that the value of <code>amount</code> must be as per the <code>amountRule</code> and <code>maxAmountLimit</code> configured while creating the mandate.</li>
+        <li>The value of <code>executionDate</code> must be <code>48 - 72 Hrs</code> ahead of current time.</li>
+        <li>The value of <code>sequenceNumber</code> must be <code>1</code> for a one time mandate.</li>
+        <li>The value of <code>umn</code> can be derived from the notifications received by the merchant during mandate creation flow or via check mandate status API</li>
+    </ul>
+</Callout>
+
+###### Sample response
 
 <CodeBlockWithCopy language="json">
     {`{
-  "amountLimit": 1000,
-  "endDate": "02012006",
-  "expireAfter": 120,
+  "amount": 1000,
+  "createdAt": "2023-09-04 12:08:20.202644 +0530 IST",
+  "executionDate": "04012006",
   "id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "mandateId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "merchantId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   "merchantReferenceId": "ABC1234789",
-  "mode": "collect",
-  "status": "initiated",
+  "sequenceNumber": 1,
+  "status": "pending",
   "txnId": "BTTZrc5gDFkuCr3n3I0ey4aNtzLOLR7K7aR",
   "umn": "c27f5fc30d344e9594fce0afa34f8859@mypsp"
 }`}
 </CodeBlockWithCopy>
 
-<a href="/payments/umap/api-reference#/category~mandates/operation~mandates#modify"target="_blank">
-<code>Update Mandate API</code> ↗
-</a>
+**In the above response:**
+
+-   `id` is a unique ID that is associated with this mandate pre debit notification and can be used to track it later.
+
+To know more about all the API params, please refer to the API documentation <a href="/payments/umap/api-reference#/category~mandates/operation~mandates#notify" target="_blank">here</a>.
+
+UMAP will send notifications to the merchant once **<i>the pre-debit notification operation is completed</i>** and **<i>the final status of the mandate.</i>**
+
+Please refer to the Document Reference section for checking the API reference and the notifications.
+
+<hr class="tertiary" />
+
+#### Step 3 - execute mandate
+
+Once the mandate pre debit notification is **successful**, the merchant can execute the mandate on the `executionDate` mentioned while sending the pre debit notification.
+
+The process for mandate execution is described in the below diagram:
+
+<img
+  src="https://storage.googleapis.com/strapi-assets/latest/mandate-pre-debit-notification/mandate-pre-debit-notification.png"
+  alt="Bridge"
+/>
+
+The merchant will have to call the **<i>execute mandate API</i>** with the correct set of parameters.
+
+<table>
+    <tbody>
+        <tr>
+            <th>Staging Host</th>
+            <td>
+                <code>https://umap-dev-core.setu.co/api/v1</code>
+            </td>
+        </tr>
+        <tr>
+            <th>Method</th>
+            <td>
+                <code>POST</code>
+            </td>
+        </tr>
+        <tr>
+            <th>Path</th>
+            <td>
+                <code>/merchants/mandates&#123;mandateId&#125;execute</code>
+            </td>
+        </tr>
+        <tr>
+            <th>Header</th>
+            <td>
+                <code>merchantId</code><br/>
+                <code>Authorization</code>: Bearer &lt;<b>insert_token_here</b>&gt;.
+                Generate this token using <a
+                    href="/payments/upi-deeplinks/resources/oauth"
+                    target="_blank">
+                    OAuth
+                </a> or <a
+                    href="/payments/upi-deeplinks/resources/jwt"
+                    target="_blank">
+                    JWT
+                </a>.<br />
+                <br />
+                <code>Content-Type</code>—will be <code>application/json</code>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+###### Sample request
+
+<CodeBlockWithCopy language="json">
+    {`{
+    "amount": 1000,
+    "merchantReferenceId": "ABC1234789",
+    "remark": "Transaction for car loan emi",
+    "sequenceNumber": 1,
+    "umn": "setumandate1234789@ybl"
+}`}
+</CodeBlockWithCopy>
+
+<Callout type="warning">
+    <ul>
+        <li>The value of <code>amount</code> must be equal to the <code>amount</code> mentioned while sending mandate pre debit notification.</li>
+        <li>The value of <code>sequenceNumber</code> must be <code>1</code> for a one time mandate.</li>
+        <li>The value of <code>umn</code> can be derived from the notifications received by the merchant during mandate creation flow or via check mandate status API</li>
+    </ul>
+</Callout>
+
+###### Sample response
+
+<CodeBlockWithCopy language="json">
+    {`{
+  "amount": 1000,
+  "createdAt": "2023-09-04 12:08:20.202644 +0530 IST",
+  "id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "mandateId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "merchantId": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "merchantReferenceId": "ABC1234789",
+  "remark": "Transaction for car loan emi",
+  "sequenceNumber": 1,
+  "status": "pending",
+  "txnId": "BTTZrc5gDFkuCr3n3I0ey4aNtzLOLR7K7aR",
+  "umn": "c27f5fc30d344e9594fce0afa34f8859@mypsp"
+}`}
+</CodeBlockWithCopy>
+
+**In the above response:**
+
+-   `id` is a unique ID that is associated with this mandate execution and can be used to track it later.
+
+To know more about all the API params, please refer to the API documentation <a href="/payments/umap/api-reference#/category~mandates/operation~mandates#execute" target="_blank">here</a>.
+
+UMAP will send notifications to the merchant once **<i>the execution operation is completed</i>** and **<i>the final status of the mandate.</i>**
+
+Please refer to the Document Reference section for checking the API reference and the notifications.
+
+Other operations that can be performed on a one time mandate once it is <b>LIVE</b>
+<ul>
+    <li>Updating a one time mandate</li>
+    <li>Revoking a one time mandate</li>
+    <li>Pausing a one time mandate</li>
+    <li>Unpausing a paused one time mandate</li>
+</ul>
+
+<hr class="tertiary" />
+
+<NextPage
+    info={{
+        description: "Other operations that can be performed on a mandate.  ",
+        slug: "/payments/umap/mandates/generic",
+        title: "Generic Operations",
+    }}
+/>
