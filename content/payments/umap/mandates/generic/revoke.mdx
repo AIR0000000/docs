@@ -7,6 +7,17 @@ visible_in_sidebar: true
 
 ## Revoking a mandate
 
+<Card padding="small" shape="rounded">
+    <a href="/payments/umap/mandates/generic" target="_blank">
+        UPI Autopay Generic Operations ↗
+    </a>
+    <p>
+        Explore other UMAP UPI Autopay generic operations here
+    </p>
+</Card>
+
+<hr class="primary"/>
+
 Revoking a UPI mandate ensures that no further action can be taken on the UPI mandate. This includes updating the mandate, sending pre-debit notifications for the mandate or executing the mandate.
 
 A mandate can be revoked by a merchant or aggregator via collect flow by calling the <b><i>revoke mandate API</i></b> or by the customer from their UPI app.
@@ -123,4 +134,12 @@ A mandate can be revoked by a merchant or aggregator via collect flow by calling
         ),
     },
   ]}
+/>
+
+<NextPage
+    info={{
+        description: "Explore other UMAP UPI Autopay generic operations here",
+        slug: "/payments/umap/mandates/generic",
+        title: "UPI Autopay Generic Operations",
+    }}
 />

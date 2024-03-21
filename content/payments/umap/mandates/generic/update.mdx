@@ -7,11 +7,24 @@ visible_in_sidebar: true
 
 ## Updating a mandate
 
+<Card padding="small" shape="rounded">
+    <a href="/payments/umap/mandates/generic" target="_blank">
+        UPI Autopay Generic Operations ↗
+    </a>
+    <p>
+        Explore other UMAP UPI Autopay generic operations here
+    </p>
+</Card>
+
+<hr class="primary"/>
+
 There are only two updates possible on a UPI mandate
 - Changing the mandate end date
 - Changing the mandate amount
 
-An intent based mandate can only be updated via an intent link / qr and a collect based mandate can only be updated via collect flow
+<Callout type="warning">
+    An intent based mandate can only be updated via an intent link / qr and a collect based mandate can only be updated via collect flow
+</Callout>
 
 <Tabs
   tabs={[
@@ -200,4 +213,12 @@ An intent based mandate can only be updated via an intent link / qr and a collec
         ),
     },
   ]}
+/>
+
+<NextPage
+    info={{
+        description: "Explore other UMAP UPI Autopay generic operations here",
+        slug: "/payments/umap/mandates/generic",
+        title: "UPI Autopay Generic Operations",
+    }}
 />
